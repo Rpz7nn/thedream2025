@@ -38,15 +38,22 @@ export const buildApiUrl = (path: string): string => {
     return path;
   }
   
+  // Normalizar URL base: remover barra final se existir
+  const baseUrl = API_BASE_URL.replace(/\/+$/, '');
+  
+  // Normalizar path: garantir que comece com /
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  
   // Se o path começa com /dreamcloud (sem /api), usar DREAMCLOUD_API_URL diretamente
   // Isso é para chamadas diretas à API do DreamCloud (raro, mas possível)
-  if (path.startsWith('/dreamcloud') && !path.startsWith('/api/dreamcloud')) {
-    return `${DREAMCLOUD_API_URL}${path}`;
+  if (normalizedPath.startsWith('/dreamcloud') && !normalizedPath.startsWith('/api/dreamcloud')) {
+    const dreamCloudBase = DREAMCLOUD_API_URL.replace(/\/+$/, '');
+    return `${dreamCloudBase}${normalizedPath}`;
   }
   
   // Para outros paths (incluindo /api, /api/dreamcloud, /auth, /orders, /applications), usar API_BASE_URL
   // O site-backend faz proxy para /api/dreamcloud/* para a API do DreamCloud
-  return `${API_BASE_URL}${path}`;
+  return `${baseUrl}${normalizedPath}`;
 };
 
 // Helper para construir URLs do DreamCloud
@@ -55,10 +62,16 @@ export const buildDreamCloudUrl = (path: string): string => {
     return path;
   }
   
+  // Normalizar URL base: remover barra final se existir
+  const baseUrl = DREAMCLOUD_API_URL.replace(/\/+$/, '');
+  
   // Remover /dreamcloud do início se existir
   const cleanPath = path.startsWith('/dreamcloud') ? path : `/dreamcloud${path.startsWith('/') ? path : `/${path}`}`;
   
-  return `${DREAMCLOUD_API_URL}${cleanPath}`;
+  // Garantir que o path comece com /
+  const normalizedPath = cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`;
+  
+  return `${baseUrl}${normalizedPath}`;
 };
 
 // Helper para verificar se estamos em produção
