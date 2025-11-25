@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#000000" />
+    <title>Dream Applications</title>
+    <meta name="description" content="Ferramentas para Discord" />
+    <meta name="author" content="Dream Applications" />
+    
+    <!-- Preconnect para CDNs externos -->
+    <link rel="preconnect" href="https://cdn.discordapp.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.discordapp.com" />
+
+    <meta property="og:title" content="Dream Applications" />
+    <meta property="og:description" content="Ferramentas para Discord" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://i.imgur.com/TKRiyrR.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@DreamApplications_br" />
+    <meta name="twitter:image" content="https://i.imgur.com/TKRiyrR.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    
+    <!-- Importação da fonte Cooveltica -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Fallback para Cooveltica local -->
+    <style>
+      @font-face {
+        font-family: 'Cooveltica';
+        src: url('./fonts/Cooveltica.woff2') format('woff2'),
+             url('./fonts/Cooveltica.woff') format('woff'),
+             url('./fonts/Cooveltica.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
