@@ -89,8 +89,11 @@ export default function Applications(): JSX.Element {
   // Buscar aplicações e faturas do usuário
   useEffect(() => {
     const fetchData = async () => {
+      // Permitir acesso sem login - apenas não carregar dados se não houver usuário
       if (!user?.id) {
         setLoading(false);
+        setApplications([]);
+        setInvoices([]);
         return;
       }
 
