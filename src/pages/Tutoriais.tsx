@@ -36,7 +36,7 @@ export default function Tutoriais() {
                 Sem tutoriais por enquanto
               </h2>
               <p className="text-gray-400 text-lg">
-                Estamos preparando conteúdo incrível para você. Em breve teremos tutoriais disponíveis!
+                Estamos preparando conteúdo incrível para você. Em breve teremos tutoriais disponíveis!!
               </p>
             </div>
           </div>
