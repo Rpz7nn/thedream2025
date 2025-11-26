@@ -14,13 +14,20 @@ const AuthContext = createContext<{
   loading: boolean;
   refresh: () => void;
   logout: () => void;
+  forceRefresh: () => void;
 } | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode; }) {
   const [user, setUser] = useState<UserType>(null);
   const [loading, setLoading] = useState(true);
+  const [skipAutoFetch, setSkipAutoFetch] = useState(false);
 
   const fetchUser = useCallback(async () => {
+    if (skipAutoFetch) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     try {
       const url = getApiPath("/auth/me");
@@ -46,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
         console.log(`[AUTH] Dados recebidos:`, data);
         if (data.success && data.user) {
         setUser(data.user);
+        setSkipAutoFetch(false); // Reset flag se login bem-sucedido
         } else {
           setUser(null);
         }
@@ -60,11 +68,40 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [skipAutoFetch]);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  // Detectar quando o usuário volta após login do Discord
+  useEffect(() => {
+    const handleFocus = () => {
+      // Se o usuário voltou para a página e não há flag de skip, tentar verificar login
+      if (!skipAutoFetch && !user) {
+        // Pequeno delay para garantir que cookies foram processados
+        setTimeout(() => {
+          fetchUser();
+        }, 500);
+      }
+    };
+
+    // Verificar quando a janela ganha foco (usuário volta para a aba)
+    window.addEventListener('focus', handleFocus);
+    
+    // Verificar imediatamente se há parâmetros de callback na URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('code') || window.location.hash.includes('access_token')) {
+      setSkipAutoFetch(false);
+      setTimeout(() => {
+        fetchUser();
+      }, 500);
+    }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [skipAutoFetch, user, fetchUser]);
 
   const logout = async () => {
     try {
@@ -73,14 +110,26 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
         credentials: "include" 
       });
       setUser(null);
+      setSkipAutoFetch(true); // Evitar re-fetch automático após logout
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
       setUser(null); // Limpa o estado local mesmo se a requisição falhar
+      setSkipAutoFetch(true); // Evitar re-fetch automático mesmo em caso de erro
     }
   };
 
+  const forceRefresh = useCallback(async () => {
+    setSkipAutoFetch(false); // Permitir fetch ao forçar refresh
+    await fetchUser();
+  }, [fetchUser]);
+
+  const refresh = useCallback(async () => {
+    setSkipAutoFetch(false); // Resetar flag ao fazer refresh manual
+    await fetchUser();
+  }, [fetchUser]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, refresh: fetchUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, refresh, logout, forceRefresh }}>
       {children}
     </AuthContext.Provider>
   );
